@@ -36,13 +36,13 @@ function loadBook(){
 const displayBook = books => {
     // error handalling 
     if (books > 0) {
-        errors.innerText =`Search Result : ${data} `
+        errors.innerText =`Search Result : ${books} `
     }
     else {
         errors.innerText =  `No Items Found`
     }
-}
-  bookContainer.innerHTML =`<h3>Result: ${books.length}</h3>`
+
+  // bookContainer.innerHTML =`<h3>Result: ${books.length}</h3>`
    books.forEach(book =>{
         console.log(book)
         const{title,author_name,first_publish_year,publisher} = book;
@@ -79,3 +79,4 @@ const displayBook = books => {
   bookContainer.appendChild(div)
     })
   
+  }
