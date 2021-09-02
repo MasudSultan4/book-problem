@@ -41,10 +41,10 @@ const showResult = data => {
 
 
   if (data > 0) {
-      searchResultDiv.innerHTML = ` <h4 class="text-center">Search Result : ${data.length} items </h4>`
+      searchResultDiv.innerHTML = ` <h4>Search Result : ${data.length} items </h4>`
   }
   else {
-      searchResultDiv.innerHTML = ` <h4 class="text-center text-danger ">No Items Found </h4>`
+      searchResultDiv.innerHTML = ` <h4>No Items Found </h4>`
   }
 }
 
