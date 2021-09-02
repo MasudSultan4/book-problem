@@ -33,17 +33,30 @@ function loadBook(){
     .finally(() => spinner.classList.add('d-none'))
 }
 
-const displayBook = books => {
-    // error handalling 
-    if (books > 0) {
-        errors.innerText =`Search Result : ${books} `
-    }
-    else {
-        errors.innerText =  `No Items Found`
-    }
+// Show Result 
+const showResult = data => {
 
-  // bookContainer.innerHTML =`<h3>Result: ${books.length}</h3>`
-   books.forEach(book =>{
+  const searchResultDiv = document.getElementById("error");
+  searchResultDiv.innerHTML = '';
+
+
+  if (data > 0) {
+      searchResultDiv.innerHTML = ` <h4 class="text-center">Search Result : ${data.length} items </h4>`
+  }
+  else {
+      searchResultDiv.innerHTML = ` <h4 class="text-center text-danger ">No Items Found </h4>`
+  }
+}
+
+
+
+
+const displayBook = data => {
+
+  // Serch Item Result Here
+  showResult(data.docs)
+
+   data.forEach(book =>{
         console.log(book)
         const{title,author_name,first_publish_year,publisher} = book;
 
