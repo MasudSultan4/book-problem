@@ -1,95 +1,59 @@
-// search Input fild 
-const searchInput = document.getElementById('searchInput')
-// search btn 
-const searchBtn = document.getElementById('search-btn')
-// error handalling
-const errors = document.getElementById('error');
-// spinner
+// This function for load data
+const loadData = () => {
+  const inputValue = document.getElementById('inputField');
+  const inputText = inputValue.value;
+  // spinner
 const spinner = document.getElementById('spinner');
-// book container 
-const bookContainer = document.getElementById('book-container')
 
-searchBtn.addEventListener('click',loadBook)
-
-
-function loadBook(){
-    const searchText = searchInput.value;
-    // errors handal empty search Input 
-    if(searchText === ""){
-      errors.innerText = "Search fild cannot be empty"
-      return;
-    }
-    else{
-      errors.textContent = '';
-    }
-    // clear 
-    searchInput.value = '';
-    bookContainer.textContent = '';
-
-    spinner.classList.remove('d-none')
-    fetch(`https://openlibrary.org/search.json?q=${searchText}`)
-    .then(res => res.json())
-    .then(data => displayBook(data.docs))
-    .finally(() => spinner.classList.add('d-none'))
-}
-
-// Show Result 
-const showResult = data => {
-
-  const searchResultDiv = document.getElementById("error");
-  searchResultDiv.innerHTML = '';
-
-
-  if (data > 0) {
-      searchResultDiv.innerHTML = ` <h4>Search Result : ${data.length} items </h4>`
+  // this condition for checking valid input data
+  if (inputText.length > 0) {
+     spinner.classList.remove('d-none')
+      const url = `https://openlibrary.org/search.json?q=${inputText}`
+      fetch(url)
+          .then(res => res.json())
+          .then(data => displayData(data.docs, data.numFound))
+          .finally(() => spinner.classList.add('d-none'))
   }
   else {
-      searchResultDiv.innerHTML = ` <h4>No Items Found </h4>`
+      document.getElementById('countResult').innerText = `Search fild cannot be empty`;
+      document.getElementById('displayField').textContent = ''
+
   }
+  inputValue.value = ''
+  
 }
 
+// This Function Show Data in UI
+const displayData = (books, totalDataFound) => {
+  const displayField = document.getElementById('displayField')
+  displayField.textContent = ''
+  const countResult = document.getElementById('countResult')
 
-
-
-const displayBook = data => {
-
-  // Serch Item Result Here
-  showResult(data.docs)
-
-   data.forEach(book =>{
-        console.log(book)
-        const{title,author_name,first_publish_year,publisher} = book;
-
-        const notFound = "Not-Found";
-        const div = document.createElement('div');
-        div.classList.add('col-md-3');
-        
-        div.innerHTML = `
-        <div class="rounded overflow-hidden border p-2">
-      <img
-        src="https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg"
-        class="w-100"
-        alt=""
-      />
-    </div>
-    
-    <div
-      class="
-        py-2
-        d-flex
-        justify-content-between
-        align-items-center
-        d-md-block
-        text-md-center
-      "
-    >
-      <h5>Book-name: <span class="text-info">${title?title:notFound}</span></h5>
-      <p>Author-name: <span class="text-info">${author_name?author_name:notFound}</span> </p>
-      <h5>Publish-year: <span class="text-info">${first_publish_year?first_publish_year:notFound}</span></h5>
-      <p>Publisher: <span class="text-info">${publisher?publisher:notFound}</span></p>
-    </div>
-  `
-  bookContainer.appendChild(div)
-    })
-  
+  // it will validate data caount
+  if (totalDataFound == 0) {
+      countResult.innerText = 'No Result Found'
   }
+  else {
+      books.forEach(book => {
+          // destrucuring from object
+          const { title, author_name, first_publish_year, publisher, cover_i } = book;
+          const imgUrl = `https://covers.openlibrary.org/b/id/${cover_i}-M.jpg`
+          const displayCard = document.createElement('div')
+          displayCard.classList.add('col')
+          displayCard.innerHTML = `
+              <div class="card cardHeight">
+                  <img src="${imgUrl}" class="card-img-top img-fluid imgSize" alt="...">
+                  <div class="card-body">
+                  <h5 class="card-title">${title.slice(0, 30)}</h5>
+                  <p>Author Name: <b>${author_name && author_name.slice(0,1)? author_name && author_name.slice(0,1): author_name}</b></b>
+                  <p>First Publish: <b>${first_publish_year}</b></b>
+                  <p>Publisher: <b>${publisher && publisher.slice(0,1)? publisher && publisher.slice(0,1): publisher}</b></b>
+                  </div>
+              </div>
+      `
+          displayField.appendChild(displayCard)
+      });
+      countResult.innerHTML = `<h3 class="text-success">We show you ${books.length} results of ${totalDataFound}</h3>`
+  }
+
+}
